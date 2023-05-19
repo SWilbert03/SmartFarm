@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Sensor, SensorLog, Actuator, ActuatorLog
+from .models import Sensor, SensorLog, Actuator
 
 @admin.register(Sensor)
 class SensorAdmin(admin.ModelAdmin):
@@ -13,8 +13,4 @@ class SensorLogAdmin(admin.ModelAdmin):
 @admin.register(Actuator)
 class ActuatorAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "state", "subsystem")
-    
-@admin.register(ActuatorLog)
-class ActuatorLogAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "state", "time")
 
