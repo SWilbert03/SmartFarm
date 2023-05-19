@@ -14,6 +14,9 @@
 <body>
 	<table border="1">
 		<th colspan="4">Corn</th>
+    <tr>
+			<td colspan="4"><canvas id="actuatorChart"></canvas></td>
+		</tr>
 		<tr>
 			<th>Soil Moisture Sensor</th>
 			<th>Air Temperature Sensor</th>
@@ -26,10 +29,6 @@
 			<td><span id="LightIntensitySensor"></span> lux</td>
 			<td><span id="AutomaticIrrigation"></span> minute</td>
 		</tr>
-		<tr>
-			<td colspan="4"><canvas id="actuatorChart"></canvas></td>
-		</tr>
-
 	</table>
 	
 </body>
@@ -64,36 +63,85 @@
   }
 
 //==
-  var actuatorChart = new Chart(document.getElementById("actuatorChart"), {
+  gradientChartOptionsConfiguration =  {
+    maintainAspectRatio: false,
+    legend: {
+          display: false
+    },
+
+    tooltips: {
+      backgroundColor: '#fff',
+      titleFontColor: '#333',
+      bodyFontColor: '#666',
+      bodySpacing: 4,
+      xPadding: 12,
+      mode: "nearest",
+      intersect: 0,
+      position: "nearest"
+    },
+    responsive: true,
+    scales:{
+      yAxes: [{
+        barPercentage: 0,
+            gridLines: {
+              drawBorder: false,
+                color: 'rgba(29,140,248,0.0)',
+                zeroLineColor: "transparent",
+            },
+            ticks: {
+              suggestedMin:0,
+              suggestedMax: 15,
+                padding: 20,
+                fontColor: "#9a9a9a"
+            }
+          }],
+
+      xAxes: [{
+        barPercentage: 1,
+            gridLines: {
+              drawBorder: false,
+                color: 'rgba(220,53,69,0.1)',
+                zeroLineColor: "transparent",
+            },
+            ticks: {
+                padding: 20,
+                fontColor: "#9a9a9a"
+            }
+          }]
+      }
+  };
+
+  var ctx = document.getElementById("actuatorChart").getContext("2d");
+
+  var gradientStroke = ctx.createLinearGradient(0,230,0,50);
+
+  gradientStroke.addColorStop(1, 'rgba(72,72,176,0.2)');
+  gradientStroke.addColorStop(0.2, 'rgba(72,72,176,0.0)');
+  gradientStroke.addColorStop(0, 'rgba(119,52,169,0)'); //purple colors
+
+  var actuatorChart = new Chart(ctx, {
 	type: 'line',
 	data: {
 		labels: [],
 		datasets: [{
-		label: "Automatic Irrigation",
-		data: [],
-		borderColor: "#3e95cd",
-		fill: false
+      label: "Automatic Irrigation",
+      data: [],
+      fill: true,
+      backgroundColor: gradientStroke,
+      borderColor: '#d048b6',
+      borderWidth: 2,
+      borderDash: [],
+      borderDashOffset: 0.0,
+      pointBackgroundColor: '#d048b6',
+      pointBorderColor:'rgba(255,255,255,0)',
+      pointHoverBackgroundColor: '#d048b6',
+      pointBorderWidth: 20,
+      pointHoverRadius: 4,
+      pointHoverBorderWidth: 15,
+      pointRadius: 4
 		}]
 	},
-	options: {
-		responsive: true,
-		title: {
-		display: true,
-		text: 'Automatic Irrigation Chart'
-		},
-		scales: {
-		xAxes: [{
-			display: true
-		}],
-		yAxes: [{
-			display: true,
-			ticks: {
-			suggestedMin: 0,
-			suggestedMax: 15
-			}
-		}]
-		}
-	}
+	options: gradientChartOptionsConfiguration
   });
 
   function updateActuatorChart(endpoint) {
