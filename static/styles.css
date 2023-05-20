@@ -65,7 +65,7 @@ body {
 .custom-table {
     min-width: 25%; 
     align-items: center;}
-.custom-table thead tr, .custom-table thead th {;
+.custom-table thead tr, .custom-table thead th {
     padding-bottom: 30px;
     border-top: none;
     border-bottom: none !important;
