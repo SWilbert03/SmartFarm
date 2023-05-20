@@ -4,6 +4,8 @@
   
 <head>
   <meta charset="utf-8">
+  <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+
   <title>Smart Farm</title> 
   <!-- jQuery library -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -12,168 +14,60 @@
 </head>
 
 <body>
-	<table border="1">
-		<th colspan="4">Corn</th>
-    <tr>
-			<td colspan="4"><canvas id="actuatorChart"></canvas></td>
-		</tr>
-		<tr>
-			<th>Soil Moisture Sensor</th>
-			<th>Air Temperature Sensor</th>
-			<th>Light Intensity Sensor</th>
-			<th>Automatic Irrigation</th>
-		</tr>
-		<tr>
-			<td><span id="SoilMoistureSensor"></span>%</td>
-			<td><span id="AirTemperatureSensor"></span>&#176;C</td>
-			<td><span id="LightIntensitySensor"></span> lux</td>
-			<td><span id="AutomaticIrrigation"></span> minute</td>
-		</tr>
-	</table>
-	
+  <div class="container">
+    <header class="header">
+      <h1>Dashboard</h1>
+    </header>
+    <main class="content">
+      <div class="left">
+        <h2>Sean Wilbert</h2>
+        <p>202000286</p>
+        
+        <table>
+          <h3>Sensor Log</h3>
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Sensor Type</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody id="sensorLogTableBody">
+            <!-- Data sensor log akan ditambahkan oleh JavaScript -->
+          </tbody>
+        </table>
+      </div>     
+      <div class="right">
+        <div class="column">
+          
+        </div>
+        <div class="column1">
+          <h2>Soil Moisture Sensor</h2>
+          <p><span id="SoilMoistureSensor"></span>%</p>
+          <canvas id="SoilMoistureSensorChart"></canvas>
+        </div>
+        <div class="column1">
+          <h2>Air Temperature Sensor</h2>
+          <p><span id="AirTemperatureSensor"></span>&#176;C</p>
+          <canvas id="AirTemperatureSensorChart"></canvas>
+        </div>
+        <div class="column1">
+          <h2>Light Intensity Sensor</h2>
+          <p><span id="LightIntensitySensor"></span> lux</p>
+          <canvas id="LightIntensitySensorChart"></canvas>
+        </div>
+        <div class="column1">
+          <h2>Automatic Irrigation</h2>
+          <p><span id="AutomaticIrrigationState"></span> minute</p>
+          <canvas id="AutomaticIrrigationChart"></canvas>
+        </div>
+      </div>
+    </main>
+    <footer class="footer">
+      <p>&copy; 2023 Your Company. All rights reserved.</p>
+    </footer>
+  </div>
+
+  <script src="{% static 'js.js' %}"></script>
+
 </body>
-
-<script>
-  function updateSensorValue(endpoint, id) {
-    $.ajax({
-      method: "GET",
-      url: endpoint,
-      success: function(data) {
-          var value = document.getElementById(id);
-          value.innerHTML = data.value;
-      },
-      error: function(error_data) {
-          console.log(error_data);
-      }
-    })
-  }
-
-  function updateActuatorState(endpoint, id) {
-    $.ajax({
-      method: "GET",
-      url: endpoint,
-      success: function(data) {
-          var state = document.getElementById(id);
-          state.innerHTML = data.state;
-      },
-      error: function(error_data) {
-          console.log(error_data);
-      }
-    })
-  }
-
-//==
-  gradientChartOptionsConfiguration =  {
-    maintainAspectRatio: false,
-    legend: {
-          display: false
-    },
-
-    tooltips: {
-      backgroundColor: '#fff',
-      titleFontColor: '#333',
-      bodyFontColor: '#666',
-      bodySpacing: 4,
-      xPadding: 12,
-      mode: "nearest",
-      intersect: 0,
-      position: "nearest"
-    },
-    responsive: true,
-    scales:{
-      yAxes: [{
-        barPercentage: 0,
-            gridLines: {
-              drawBorder: false,
-                color: 'rgba(29,140,248,0.0)',
-                zeroLineColor: "transparent",
-            },
-            ticks: {
-              suggestedMin:0,
-              suggestedMax: 15,
-                padding: 20,
-                fontColor: "#9a9a9a"
-            }
-          }],
-
-      xAxes: [{
-        barPercentage: 1,
-            gridLines: {
-              drawBorder: false,
-                color: 'rgba(220,53,69,0.1)',
-                zeroLineColor: "transparent",
-            },
-            ticks: {
-                padding: 20,
-                fontColor: "#9a9a9a"
-            }
-          }]
-      }
-  };
-
-  var ctx = document.getElementById("actuatorChart").getContext("2d");
-
-  var gradientStroke = ctx.createLinearGradient(0,230,0,50);
-
-  gradientStroke.addColorStop(1, 'rgba(72,72,176,0.2)');
-  gradientStroke.addColorStop(0.2, 'rgba(72,72,176,0.0)');
-  gradientStroke.addColorStop(0, 'rgba(119,52,169,0)'); //purple colors
-
-  var actuatorChart = new Chart(ctx, {
-	type: 'line',
-	data: {
-		labels: [],
-		datasets: [{
-      label: "Automatic Irrigation",
-      data: [],
-      fill: true,
-      backgroundColor: gradientStroke,
-      borderColor: '#d048b6',
-      borderWidth: 2,
-      borderDash: [],
-      borderDashOffset: 0.0,
-      pointBackgroundColor: '#d048b6',
-      pointBorderColor:'rgba(255,255,255,0)',
-      pointHoverBackgroundColor: '#d048b6',
-      pointBorderWidth: 20,
-      pointHoverRadius: 4,
-      pointHoverBorderWidth: 15,
-      pointRadius: 4
-		}]
-	},
-	options: gradientChartOptionsConfiguration
-  });
-
-  function updateActuatorChart(endpoint) {
-  	$.ajax({
-    method: "GET",
-    url: endpoint,
-    success: function(data) {
-	  actuatorChart.data.labels.push(new Date().toLocaleTimeString());
-      actuatorChart.data.datasets[0].data.push(data.state);
-      
-      // hapus data lama jika data sudah mencapai 7
-      if (actuatorChart.data.labels.length > 7) {
-        actuatorChart.data.labels.shift();
-        actuatorChart.data.datasets[0].data.shift();
-      }
-      
-      actuatorChart.update();
-    },
-    error: function(error_data) {
-      console.log(error_data);
-    }
-    })
-  }
-  
-  setInterval(function(){
-	
-    updateSensorValue('/smartfarm/soilmoisture', 'SoilMoistureSensor');
-    updateSensorValue('/smartfarm/airtemperature', 'AirTemperatureSensor');
-    updateSensorValue('/smartfarm/lightintensity', 'LightIntensitySensor');
-    updateActuatorState('/actuator/automaticirrigation', 'AutomaticIrrigation');
-	updateActuatorChart('/actuator/automaticirrigation');
-
-  }, 1000);
-
-</script>

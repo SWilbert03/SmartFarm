@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import View
 from django.conf import settings
+from django.http import JsonResponse
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -38,31 +39,11 @@ class ActuatorTemplateView(APIView):
             "state": actuator.state
         }
         return Response(data)
-
-class ActuatorTemplateSystemView(APIView):
-    actuator_name = ""
-    actuatorsubsystem1  = ""
-    actuatorsubsystem2  = ""
-    actuatorsubsystem3  = ""
-    training_csv  = ""
-    def get(self, request, format=None):
-        actuator = Actuator.objects.get(name=self.actuator_name)
-        actuatorsubsystem1 = Actuator.objects.get(name=self.actuatorsubsystem1)
-        actuatorsubsystem2 = Actuator.objects.get(name=self.actuatorsubsystem2)
-        actuatorsubsystem3 = Actuator.objects.get(name=self.actuatorsubsystem3)
-        model = mlmodel.BaseLinearRegression(settings.ML_ROOT + self.training_csv)
-        prediction = model.predict([float(actuatorsubsystem1.state), float(actuatorsubsystem2.state), float(actuatorsubsystem3.state)])
-        actuator.state = int(prediction)
-        actuator.save()
-        data = {
-            "state": actuator.state
-        }
-        return Response(data)
-
+    
 class DashboardView(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'home.html')
-    
+
 # Smart Farm ==========================================================================================================================================
 class SoilMoistureSensorView(SensorTemplateView):
     sensor_name = "Soil Moisture Sensor"
@@ -79,3 +60,16 @@ class AutomaticIrrigationview(ActuatorTemplateView):
     sensor2_name = "Air Temperature Sensor"
     sensor3_name = "Light Intensity Sensor"
     training_csv = "AutomaticIrrigation.csv"
+
+
+class LatestSensorLogView(View):
+    def get(self, request):
+        sensor_logs = SensorLog.objects.order_by('-time')[:10]
+        data = []
+        for log in sensor_logs:
+            data.append({
+                'timestamp': log.time.isoformat(),
+                'sensor_name': log.name.name,
+                'value': log.value,
+            })
+        return JsonResponse(data, safe=False)

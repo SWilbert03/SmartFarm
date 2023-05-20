@@ -14,3 +14,5 @@ class Actuator(models.Model):
     name = models.CharField(max_length=200)
     state = models.CharField(max_length=200)
     subsystem = models.CharField(max_length=200)
+
+    
