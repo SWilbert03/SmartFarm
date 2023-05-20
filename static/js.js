@@ -28,47 +28,47 @@ $.ajax({
 
 
 var gradientChartOptionsConfiguration = {
-maintainAspectRatio: false,
-legend: {
-    display: false
-},
-tooltips: {
-    backgroundColor: '#333',
-    titleFontColor: '#333',
-    bodyFontColor: '#666',
-    bodySpacing: 4,
-    xPadding: 12,
-    mode: "nearest",
-    intersect: 0,
-    position: "nearest"
-},
-responsive: true,
-scales: {
-    yAxes: [{
-    barPercentage: 1,
-    gridLines: {
-        drawBorder: false,
-        color: 'rgba(29,140,248,0.0)',
-        zeroLineColor: "transparent",
+    maintainAspectRatio: false,
+    legend: {
+        display: false
     },
-    ticks: {
-        suggestedMin: 0,
-        suggestedMax: 5,
-        padding: 20,
-        fontColor: "#9a9a9a"
-    }
-    }],
-    xAxes: [{
-    gridLines: {
-        drawBorder: false,
-        color: 'rgba(220,53,69,0.1)',
-        zeroLineColor: "transparent",
+    tooltips: {
+        backgroundColor: '#333',
+        titleFontColor: '#333',
+        bodyFontColor: '#666',
+        bodySpacing: 4,
+        xPadding: 12,
+        mode: "nearest",
+        intersect: 0,
+        position: "nearest"
     },
-    ticks: {
-        padding: 20,
-        fontColor: "#9a9a9a"
-    }
-    }]
+    responsive: true,
+    scales: {
+        yAxes: [{
+        barPercentage: 1,
+        gridLines: {
+            drawBorder: false,
+            color: 'rgba(29,140,248,0.0)',
+            zeroLineColor: "transparent",
+        },
+        ticks: {
+            suggestedMin: 0,
+            suggestedMax: 5,
+            padding: 20,
+            fontColor: "#9a9a9a"
+        }
+        }],
+        xAxes: [{
+        gridLines: {
+            drawBorder: false,
+            color: 'rgba(220,53,69,0.1)',
+            zeroLineColor: "transparent",
+        },
+        ticks: {
+            padding: 20,
+            fontColor: "#9a9a9a"
+        }
+        }]
 }
 };
 
@@ -298,8 +298,19 @@ $.ajax({
         var row = document.createElement("tr");
 
         var timestampCell = document.createElement("td");
-        timestampCell.textContent = log.timestamp;
+        var timestamp = new Date(log.timestamp);
+        var formattedTimestamp = timestamp.toLocaleString("en-US", {
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric",
+            year: "numeric",
+            month: "numeric",
+            day: "numeric"
+        });
+        timestampCell.textContent = formattedTimestamp;
         row.appendChild(timestampCell);
+
+        tableBody.appendChild(row);
 
         var sensorTypeCell = document.createElement("td");
         sensorTypeCell.textContent = log.sensor_name;
@@ -309,7 +320,6 @@ $.ajax({
         valueCell.textContent = log.value;
         row.appendChild(valueCell);
 
-        tableBody.appendChild(row);
     });
     },
     error: function(error_data) {
@@ -319,17 +329,19 @@ $.ajax({
 }
 
 setInterval(function() {
-updateSensorValue('/smartfarm/soilmoisture', 'SoilMoistureSensor');
-updateSoilMoistureChart('/smartfarm/soilmoisture');
+    updateSensorValue('/smartfarm/soilmoisture', 'SoilMoistureSensor');
+    updateSensorValue('/smartfarm/airtemperature', 'AirTemperatureSensor');
+    updateSensorValue('/smartfarm/lightintensity', 'LightIntensitySensor');
+    updateActuatorState('/actuator/automaticirrigation', 'AutomaticIrrigationState');
+}, 1000);
 
-updateSensorValue('/smartfarm/airtemperature', 'AirTemperatureSensor');
-updateAirTemperatureChart('/smartfarm/airtemperature');
+setInterval(function() {
+    updateSoilMoistureChart('/smartfarm/soilmoisture');
+    updateAirTemperatureChart('/smartfarm/airtemperature');
+    updateLightIntensityChart('/smartfarm/lightintensity');
+    updateAutomaticIrrigationChart('/actuator/automaticirrigation');
+}, 1000);
 
-updateSensorValue('/smartfarm/lightintensity', 'LightIntensitySensor');
-updateLightIntensityChart('/smartfarm/lightintensity');
-
-updateActuatorState('/actuator/automaticirrigation', 'AutomaticIrrigationState');
-updateAutomaticIrrigationChart('/actuator/automaticirrigation');
-
-getLatestSensorLogs();
+setInterval(function() {
+    getLatestSensorLogs();
 }, 1000);

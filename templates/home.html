@@ -5,6 +5,7 @@
 <head>
   <meta charset="utf-8">
   <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+  <link rel="icon" href="{% static 'pic/logo_white.png' %}" type="image/png">
 
   <title>Smart Farm</title> 
   <!-- jQuery library -->
@@ -16,55 +17,52 @@
 <body>
   <div class="container">
     <header class="header">
-      <h1>Dashboard</h1>
+      <!-- <img src="{% static 'pic/logo_white.png' %}" alt="Image description" height="100px"> -->
+      <h1 style="color:#333">Dashboard</h1>
     </header>
     <main class="content">
       <div class="left">
-        <h2>Sean Wilbert</h2>
-        <p>202000286</p>
-        
-        <table>
-          <h3>Sensor Log</h3>
+        <table class="table table-striped custom-table">
+          <h3>Sensor Log</h3></br>
           <thead>
             <tr>
-              <th>Timestamp</th>
-              <th>Sensor Type</th>
-              <th>Value</th>
+              
+              <th scope="col">Timestamp</th>
+              <th scope="col">Sensor Type</th>
+              <th scope="col">Value</th>
             </tr>
           </thead>
+         
           <tbody id="sensorLogTableBody">
             <!-- Data sensor log akan ditambahkan oleh JavaScript -->
           </tbody>
         </table>
       </div>     
       <div class="right">
-        <div class="column">
-          
-        </div>
         <div class="column1">
-          <h2>Soil Moisture Sensor</h2>
-          <p><span id="SoilMoistureSensor"></span>%</p>
+          <h2 style="color: #39cc74;"><span id="SoilMoistureSensor"></span>%</h2>
+          <p><b>Soil Moisture Sensor</b></p>
           <canvas id="SoilMoistureSensorChart"></canvas>
         </div>
         <div class="column1">
-          <h2>Air Temperature Sensor</h2>
-          <p><span id="AirTemperatureSensor"></span>&#176;C</p>
+          <h2 style="color: #369ef0;"><span id="AirTemperatureSensor"></span>&#176;C</h2>
+          <p><b>Air Temperature Sensor</b></p>
           <canvas id="AirTemperatureSensorChart"></canvas>
         </div>
         <div class="column1">
-          <h2>Light Intensity Sensor</h2>
-          <p><span id="LightIntensitySensor"></span> lux</p>
+          <h2 style="color: #ffce56;"><span id="LightIntensitySensor"></span> lux</h2>
+          <p><b>Light Intensity Sensor</b></p>
           <canvas id="LightIntensitySensorChart"></canvas>
         </div>
         <div class="column1">
-          <h2>Automatic Irrigation</h2>
-          <p><span id="AutomaticIrrigationState"></span> minute</p>
+          <h2 style="color: #9b59b6;"><span id="AutomaticIrrigationState"></span> minute</h2>
+          <p><b>Automatic Irrigation</b></p>
           <canvas id="AutomaticIrrigationChart"></canvas>
         </div>
       </div>
     </main>
     <footer class="footer">
-      <p>&copy; 2023 Your Company. All rights reserved.</p>
+      <p>&copy; 2023 Sean Wilbert. 202000286</p>
     </footer>
   </div>
 
